@@ -15,7 +15,9 @@ const HomePage = () => {
     const [transitionClasses, setTransitionClasses] = useState({});
     const [transitionClasses2, setTransitionClasses2] = useState({});
     const [noTodoDeco, setNoTodoDeco] = useState('');
-    const [editClassed, setEditClasses] = useState({});
+    const [editClasses, setEditClasses] = useState({});
+    const [editTodoTitle, setEditTodoTitle] = useState('');
+    const [editTodoDate, setEditTodoDate] = useState('');
 
 
 
@@ -45,12 +47,16 @@ const HomePage = () => {
 
             const dateToUse = todoDate ? todoDate : new Date().toLocaleDateString('en-CA');
 
+            setEditClasses((prev) => ({
+                ...prev,
+                [todoId]: false
+            }));
+
             const newTodo = { title: todoTitle, date: dateToUse, id: todoId, edit: false };
             setTodoList([...todoList, newTodo]);
             setTodoTitle('');
             setTodoDate('');
         } else if (!todoTitle) {
-            console.log('triggered');
             setNoTodoDeco('borderAlert');
             setTimeout(() => {
                 setNoTodoDeco('');
@@ -188,8 +194,47 @@ const HomePage = () => {
         setCompletedTodos(newCompleteList);
     }
 
-    const editHandler = () => {
+    const editHandler = (todoId) => {
+        setEditClasses((prev) => ({
+            ...prev,
+            [todoId]: true
+        }))
+    }
 
+    const [blackEditTitle, setBlackEditTitle] = useState();
+
+    const handleTodoEdit = (todoId) => {
+        const dateToUse = editTodoDate ? editTodoDate : new Date().toLocaleDateString('en-CA');
+        if (!editTodoTitle) {
+            setBlackEditTitle(true);
+            setTimeout(() => {
+                setBlackEditTitle(false);
+            }, 1000);
+        } else {
+            setTodoList(todoList.map(todo =>
+                todo.id === todoId ? { ...todo, title: editTodoTitle, date: dateToUse, id: todoId }
+                    : todo
+            ));
+
+            setEditTodoDate('');
+            setEditTodoTitle('');
+
+            setEditClasses((prev) => ({
+                ...prev,
+                [todoId]: false
+            }))
+        }
+    }
+    const cancelEditButton = (todoId) => {
+        setTodoList(todoList.map(todo =>
+            todo.id === todoId ? { ...todo, title: todo.title, date: todo.date, id: todo.id }
+                : todo
+        )
+        )
+        setEditClasses((prev) => ({
+            ...prev,
+            [todoId]: false
+        }))
     }
     //main rendering
     return (
@@ -229,14 +274,37 @@ const HomePage = () => {
                 {/*mapping of todolist*/}
                 {
                     sortedList.length > 0 ? sortedList.map((todo) => todo && (
-                        <div key={todo.id} className={`todoListContainer ${transitionClasses[todo.id] || ''}`}>
-                            <div className="checkPlusTodo">
-                                <input type='checkBox' onChange={(e) => checkBoxHandler(e, todo.id)} />
-                                {todo.title}
-                            </div>
-                            <span>{todo.date}<CiEdit style={{ marginLeft: '0.5rem', cursor: 'pointer' }} onClick={editHandler} /></span>
-                            <button className='deleteButton' onClick={() => deleteTodo(todo.id)}>Delete</button>
-                        </div>
+                        editClasses[todo.id] ?
+                            (
+                                <div key={todo.id}>
+                                    <input
+                                        className={`editTodoTitle ${blackEditTitle ? 'borderAlert' : ''}`}
+                                        type='text'
+                                        value={editTodoTitle}
+                                        onChange={(e) => {
+                                            setEditTodoTitle(e.target.value);
+                                        }} />
+                                    <input
+                                        className="editTodoDate"
+                                        type='date'
+                                        value={editTodoDate}
+                                        onChange={(e) => {
+                                            setEditTodoDate(e.target.value);
+                                        }}
+                                    />
+                                    <button className='deleteButton saveEditButton' onClick={() => handleTodoEdit(todo.id)}>Save</button>
+                                    <button className="deleteButton" onClick={() => cancelEditButton(todo.id)}>Cancel</button>
+                                </div>
+                            ) : (
+                                <div key={todo.id} className={`todoListContainer ${transitionClasses[todo.id] || ''}`}>
+                                    <div className="checkPlusTodo">
+                                        <input type='checkBox' onChange={(e) => checkBoxHandler(e, todo.id)} />
+                                        {todo.title}
+                                    </div>
+                                    <span>{todo.date}<CiEdit style={{ marginLeft: '0.5rem', cursor: 'pointer' }} onClick={() => editHandler(todo.id)} /></span>
+                                    <button className='deleteButton' onClick={() => deleteTodo(todo.id)}>Delete</button>
+                                </div>
+                            )
                     )) : (<span style={{ textAlign: 'center' }}>No Todos</span>)
                 }
                 <div className="completedTodoTitle">{completedTodos.length > 0 ? <span><hr /><br />Completed</span> : ""}
@@ -249,7 +317,7 @@ const HomePage = () => {
                                     <input defaultChecked type='checkBox' onChange={(e) => unCheckBoxHandler(e, todo.id)} />
                                     {todo.title}
                                 </div>
-                                <span>{todo.date}<CiEdit style={{ marginLeft: '0.5rem', cursor: 'pointer' }} onClick={editHandler} /></span>
+                                <span>{todo.date}</span>
                                 <button className='deleteButton' onClick={(e) => deleteCompletedTodo(e, todo.id)}>Delete</button>
                             </div>
                         ))

@@ -138,7 +138,6 @@
     padding: 5px 10px;
     cursor: pointer;
     font-size: 14px;
-    margin-left: 0.5rem;
 }
 
 .deleteButton:hover {
@@ -217,4 +216,29 @@
         width: 90%;
     }
 
+}
+
+.editTodoTitle {
+    border: 2px solid #333;
+    transition: all 0.2s ease;
+    padding: 5px;
+    width: 30%;
+    border-radius: 3px;
+}
+
+.editTodoTitle.borderAlert {
+    border: 2px solid #0834f5
+}
+
+.editTodoDate {
+    border: 2px solid #333;
+    transition: all 0.2s ease;
+    padding: 4px;
+    border-radius: 3px;
+    margin-left: 0.5rem
+}
+
+.saveEditButton {
+    margin-left: 0.5rem;
+    margin-right: 0.5rem
 }
