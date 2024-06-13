@@ -22,11 +22,11 @@ const HomePage = () => {
 
 
     const dt = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD format
-    const savedData = JSON.parse(localStorage.getItem('todoList'));
-    const savedData2 = JSON.parse(localStorage.getItem('completedTodos'));
 
     //getitem from local Storage once-at starting using useEffect
     useEffect(() => {
+        const savedData = JSON.parse(localStorage.getItem('todoList'));
+        const savedData2 = JSON.parse(localStorage.getItem('completedTodos'));
         if (Array.isArray(savedData)) {
             setTodoList(savedData);
             setSortedList(savedData);
@@ -75,13 +75,13 @@ const HomePage = () => {
         let newFilteredList = [...todoList];
         ///let newCompleteFilteredList = [...completedTodos];
         if (filterMethod === 'todayFilter') {
-            newFilteredList = newFilteredList.filter((todo) => todo.date === dt);
+            newFilteredList = newFilteredList.filter((todo) => todo.date === new Date().toLocaleDateString('en-CA'));
             //newCompleteFilteredList = newCompleteFilteredList.filter((todo) => todo.date === dt);
         } else if (filterMethod === 'upComingFilter') {
-            newFilteredList = newFilteredList.filter((todo) => todo.date >= dt);
+            newFilteredList = newFilteredList.filter((todo) => todo.date >= new Date().toLocaleDateString('en-CA'));
             //newCompleteFilteredList = newCompleteFilteredList.filter((todo) => todo.date >= dt);
         } else if (filterMethod === 'missedFilter') {
-            newFilteredList = newFilteredList.filter((todo) => todo.date < dt);
+            newFilteredList = newFilteredList.filter((todo) => todo.date < new Date().toLocaleDateString('en-CA'));
             //newCompleteFilteredList = newCompleteFilteredList.filter((todo) => todo.date < dt);
         }
 
