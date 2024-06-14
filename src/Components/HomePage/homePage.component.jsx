@@ -1,3 +1,6 @@
+/* eslint-disable jsx-a11y/role-has-required-aria-props */
+/* eslint-disable jsx-a11y/no-redundant-roles */
+/* eslint-disable jsx-a11y/aria-role */
 import { useEffect, useState } from "react";
 import "./homePage.styles.css";
 
